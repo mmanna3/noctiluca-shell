@@ -18,7 +18,7 @@ first_command="cd .. && clear"
 iTermExec "$first_command"
 
 # Abre la segunda pestaña y ejecuta los comandos
-second_command="cd ../noctiluca-fe && cursor . && npm run dev"
+second_command="cd ../noctiluca-fe && cursor . && yarn start"
 iTermExec "$second_command"
 
 # Abre la tercera pestaña y ejecuta los comandos

@@ -1,0 +1,193 @@
+# Noctiluca - PWA de Gestión de Documentos
+
+## Descripción del Proyecto
+Noctiluca es una PWA (Progressive Web App) para gestión de documentos y escritos organizados en carpetas. El proyecto está dividido en dos partes principales:
+- **Frontend**: React con TypeScript (noctiluca-fe)
+- **Backend**: .NET Core 8.0 Web API (noctiluca-be)
+
+## Arquitectura del Proyecto
+
+### Frontend (noctiluca-fe)
+- **Framework**: React 18.2.0 con TypeScript
+- **Routing**: React Router DOM v6 con HashRouter
+- **Estado**: Zustand para manejo de estado global
+- **HTTP Client**: TanStack React Query v5 para manejo de datos
+- **UI**: Tailwind CSS + Heroicons + Emotion
+- **Drag & Drop**: @dnd-kit para funcionalidad de arrastrar y soltar
+- **Notificaciones**: Sonner para toasts
+- **Autenticación**: JWT con jwt-decode
+- **PWA**: Workbox para service workers
+- **Build Tool**: CRACO (Create React App Configuration Override)
+- **Linting**: ESLint + Prettier
+
+### Backend (noctiluca-be)
+- **Framework**: .NET Core 8.0 Web API
+- **Base de Datos**: Entity Framework Core con SQL Server/SQLite
+- **Autenticación**: JWT Bearer Authentication
+- **Documentación**: Swagger/OpenAPI + NSwag
+- **Logging**: NLog
+- **Mapping**: AutoMapper
+- **Validación**: Data Annotations
+- **Arquitectura**: Clean Architecture con capas separadas
+
+## Estructura de Entidades
+
+### Entidades Principales
+- **Usuario**: Autenticación con roles
+- **Carpeta**: Contenedores de escritos con criterios de orden
+- **Escrito**: Documentos con título, cuerpo y metadatos
+- **Rol**: Sistema de permisos
+- **CriterioDeOrden**: Configuración de ordenamiento
+
+### Relaciones
+- Usuario → Rol (1:N)
+- Carpeta → Escrito (1:N)
+- Carpeta → CriterioDeOrden (N:1)
+
+## Configuración de Desarrollo
+
+### Frontend
+- **Puerto**: 3000 (desarrollo)
+- **Alias**: `@` apunta a `src/`
+- **Variables de entorno**: `REACT_APP_API_BASE_URL`
+- **Scripts disponibles**:
+  - `yarn start`: Desarrollo
+  - `yarn build`: Producción
+  - `yarn deploy`: Deploy a GitHub Pages
+  - `yarn limpiar`: Limpiar node_modules y reinstalar
+
+### Backend
+- **Puerto**: 5072 (desarrollo)
+- **Base de datos**: SQL Server (Docker) o SQLite
+- **CORS**: Habilitado en desarrollo
+- **Swagger**: Disponible en `/swagger`
+- **Migraciones**: Entity Framework Core
+
+## Scripts de Automatización
+
+### deploy-local.sh
+```bash
+# Construye el frontend y copia archivos al backend
+cd noctiluca-fe
+yarn build
+cp -rf ./build/. ./../noctiluca-be/Api/wwwroot
+```
+
+### generar-contrato-be-en-fe.sh
+```bash
+# Genera cliente TypeScript desde OpenAPI
+swagger tofile --output swagger.json ../noctiluca-be/Api/bin/Debug/net8.0/Api.dll v1
+nswag openapi2tsclient /input:swagger.json /output:./../noctiluca-fe/src/api/clients.ts
+```
+
+## Convenciones de Código
+
+### Frontend
+- **Componentes**: PascalCase para nombres de archivos
+- **Hooks**: Prefijo `use-` para custom hooks
+- **Rutas**: Definidas en `src/rutas.ts`
+- **API**: Cliente generado automáticamente en `src/api/clients.ts`
+- **Contexto**: AppContextProvider para estado global
+- **Autenticación**: RequiereAutenticacion wrapper component
+
+### Backend
+- **Arquitectura**: Clean Architecture
+  - `Core/`: Entidades, DTOs, Interfaces, Servicios
+  - `Persistencia/`: Repositorios, DbContext
+  - `Api/`: Controllers, Configuración
+- **Naming**: PascalCase para clases, camelCase para propiedades
+- **DTOs**: Separados de entidades
+- **Inyección de dependencias**: Configurada en `InyeccionDeDependenciasConfig`
+- **Mapeo**: AutoMapper configurado en `MapperConfig`
+
+## Base de Datos
+
+### Configuración Local
+```bash
+# Docker SQL Server
+docker run --cap-add SYS_PTRACE -e 'ACCEPT_EULA=1' -e 'MSSQL_SA_PASSWORD=Pas$word!39' -p 1433:1433 --name noctiluca-localhost -d mcr.microsoft.com/azure-sql-edge
+```
+
+### Migraciones
+```bash
+# Agregar migración
+dotnet ef migrations add NombreMigracion
+
+# Aplicar migraciones
+dotnet ef database update
+
+# Revertir migración
+dotnet ef migrations remove
+```
+
+## Funcionalidades Principales
+
+### Gestión de Carpetas
+- Crear, editar, eliminar carpetas
+- Reordenar carpetas (drag & drop)
+- Configurar criterios de ordenamiento
+- Autenticación por carpeta
+
+### Gestión de Escritos
+- Crear, editar, eliminar escritos
+- Modo de lectura
+- Papelera de reciclaje
+- Búsqueda y filtrado
+
+### Autenticación
+- Login con JWT
+- Cambio de contraseña
+- Roles y permisos
+- Protección de rutas
+
+## Herramientas de Desarrollo
+
+### Frontend
+- **IDE**: Cursor/VS Code
+- **Package Manager**: Yarn
+- **Linting**: ESLint + Prettier
+- **Testing**: Jest + React Testing Library
+
+### Backend
+- **IDE**: Visual Studio / Rider
+- **Package Manager**: NuGet
+- **ORM**: Entity Framework Core
+- **API Documentation**: Swagger/OpenAPI
+
+## Deploy y Producción
+
+### Frontend
+- Build estático servido desde el backend
+- PWA con service workers
+- Deploy a GitHub Pages disponible
+
+### Backend
+- Hosting en Plesk
+- Configuración WAF: Detection only
+- Base de datos SQL Server en producción
+
+## Notas Importantes
+
+1. **Ignorar carpeta `migracion/`**: Contiene scripts de migración temporal
+2. **PWA**: La aplicación funciona offline con service workers
+3. **Autenticación**: JWT con refresh token
+4. **CORS**: Configurado para desarrollo local
+5. **Logging**: NLog configurado para producción
+6. **Error Handling**: Global exception handler implementado
+
+## Comandos Útiles
+
+```bash
+# Desarrollo completo
+cd noctiluca-be/Api && dotnet run
+cd noctiluca-fe && yarn start
+
+# Generar cliente API
+./scripts/generar-contrato-be-en-fe.sh
+
+# Deploy local
+./scripts/deploy-local.sh
+
+# Limpiar frontend
+cd noctiluca-fe && yarn limpiar
+```

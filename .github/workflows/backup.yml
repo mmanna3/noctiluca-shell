@@ -12,25 +12,55 @@ jobs:
     steps:
       - name: "0a - Limpiar backups locales previos (si quedaron de un run fallido)"
         run: |
-          curl -fsS -X DELETE -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" "${{ vars.API_URL }}/api/backup/limpiar-backups-locales"
+          code=$(curl -sSL -o "$RUNNER_TEMP/body" -w "%{http_code}" -X DELETE \
+            -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" \
+            "${{ vars.API_URL }}/api/backup/limpiar-backups-locales")
+          cat "$RUNNER_TEMP/body"
+          echo "HTTP $code"
+          [ "$code" -lt 400 ]
 
       - name: "0b - Validar archivos locales (máx 2)"
         run: |
-          curl -fsS -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" "${{ vars.API_URL }}/api/backup/validar-archivos-locales"
+          code=$(curl -sSL -o "$RUNNER_TEMP/body" -w "%{http_code}" \
+            -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" \
+            "${{ vars.API_URL }}/api/backup/validar-archivos-locales")
+          cat "$RUNNER_TEMP/body"
+          echo "HTTP $code"
+          [ "$code" -lt 400 ]
 
       - name: "1 - Generar backup BD en disco"
         run: |
-          curl -fsS -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" "${{ vars.API_URL }}/api/backup/guardar-backup-bd-en-disco"
+          code=$(curl -sSL -o "$RUNNER_TEMP/body" -w "%{http_code}" \
+            -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" \
+            "${{ vars.API_URL }}/api/backup/guardar-backup-bd-en-disco")
+          cat "$RUNNER_TEMP/body"
+          echo "HTTP $code"
+          [ "$code" -lt 400 ]
 
       - name: "2 - Rotar backups en Drive (borra el más viejo si hay más de 3 días)"
         run: |
-          curl -fsS -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" "${{ vars.API_URL }}/api/backup/rotar-backups-en-drive"
+          code=$(curl -sSL -o "$RUNNER_TEMP/body" -w "%{http_code}" \
+            -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" \
+            "${{ vars.API_URL }}/api/backup/rotar-backups-en-drive")
+          cat "$RUNNER_TEMP/body"
+          echo "HTTP $code"
+          [ "$code" -lt 400 ]
 
       - name: "3 - Subir backup BD a Drive"
         run: |
-          curl -fsS -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" "${{ vars.API_URL }}/api/backup/subir-backup-bd-a-drive"
+          code=$(curl -sSL -o "$RUNNER_TEMP/body" -w "%{http_code}" \
+            -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" \
+            "${{ vars.API_URL }}/api/backup/subir-backup-bd-a-drive")
+          cat "$RUNNER_TEMP/body"
+          echo "HTTP $code"
+          [ "$code" -lt 400 ]
 
       - name: "4 - Limpiar backups locales"
         if: always()
         run: |
-          curl -fsS -X DELETE -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" "${{ vars.API_URL }}/api/backup/limpiar-backups-locales"
+          code=$(curl -sSL -o "$RUNNER_TEMP/body" -w "%{http_code}" -X DELETE \
+            -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" \
+            "${{ vars.API_URL }}/api/backup/limpiar-backups-locales")
+          cat "$RUNNER_TEMP/body"
+          echo "HTTP $code"
+          [ "$code" -lt 400 ]

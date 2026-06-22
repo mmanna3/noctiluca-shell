@@ -1,0 +1,36 @@
+name: Backup diario a Google Drive
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # 00:00 Argentina (UTC-3)
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: "0a - Limpiar backups locales previos (si quedaron de un run fallido)"
+        run: |
+          curl -fsS -X DELETE -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" "${{ vars.API_URL }}/api/backup/limpiar-backups-locales"
+
+      - name: "0b - Validar archivos locales (máx 2)"
+        run: |
+          curl -fsS -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" "${{ vars.API_URL }}/api/backup/validar-archivos-locales"
+
+      - name: "1 - Generar backup BD en disco"
+        run: |
+          curl -fsS -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" "${{ vars.API_URL }}/api/backup/guardar-backup-bd-en-disco"
+
+      - name: "2 - Rotar backups en Drive (borra el más viejo si hay más de 3 días)"
+        run: |
+          curl -fsS -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" "${{ vars.API_URL }}/api/backup/rotar-backups-en-drive"
+
+      - name: "3 - Subir backup BD a Drive"
+        run: |
+          curl -fsS -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" "${{ vars.API_URL }}/api/backup/subir-backup-bd-a-drive"
+
+      - name: "4 - Limpiar backups locales"
+        if: always()
+        run: |
+          curl -fsS -X DELETE -H "X-Api-Key: ${{ secrets.BACKUP_API_KEY }}" "${{ vars.API_URL }}/api/backup/limpiar-backups-locales"

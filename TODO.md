@@ -24,6 +24,7 @@
 - [ ] Adjuntar grabaciones
 - [ ] Timer para elongar
 - [ ] Timer Pomodoro
+- [ ] Tracker de cosas flexible (canto, entrenar, etc)
 
 ---
 

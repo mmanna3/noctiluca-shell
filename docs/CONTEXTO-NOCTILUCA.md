@@ -2,6 +2,8 @@
 
 Documento de referencia para sesiones futuras de desarrollo.
 
+> ⚠️ **Desactualizado para el frontend.** Las secciones de frontend describen `noctiluca-fe`, que está **deprecado**. El frontend activo es `noctiluca-app` (Expo): ver `noctiluca-app/CLAUDE.md`. Las secciones de backend siguen vigentes.
+
 ## Arquitectura general
 
 Monorepo con dos aplicaciones:

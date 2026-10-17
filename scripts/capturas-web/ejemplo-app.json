@@ -1,0 +1,11 @@
+[
+	{ "ir": "http://localhost:8082/", "espera": 3000 },
+	{ "js": "localStorage.setItem('auth-token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiQWRtaW5pc3RyYWRvciIsIm5hbWUiOiJtYW5hIiwiZXhwIjo0MTAyNDQ0ODAwfQ.firma'); 1" },
+	{ "ir": "http://localhost:8082/", "espera": 8000 },
+	{ "foto": "/tmp/app-inicio.png" },
+	{ "click": "diario" },
+	{ "click": "Sobre el silencio" },
+	{ "foto": "/tmp/app-escrito.png" },
+	{ "tam": [390, 844] },
+	{ "foto": "/tmp/app-escrito-movil.png" }
+]

@@ -13,6 +13,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Los features nuevos de frontend van **siempre** en `noctiluca-app`. Si un documento (incluido `docs/CONTEXTO-NOCTILUCA.md`) habla de `noctiluca-fe`, esa parte está desactualizada para el frontend.
 
+## 🚧 Trabajo en curso
+
+- **Mejorar la web de `noctiluca-app`** → leer [`PLAN_WEB.md`](PLAN_WEB.md) antes de empezar: diagnóstico, propuesta priorizada y decisiones pendientes. Para verificar cambios visuales con capturas: `scripts/capturas-web/`.
+
 ## Estructura del repo
 
 Este repo raíz es un "paraguas": solo contiene docs, scripts y CI (backup). **Cada app es un repo git independiente** (están en `.gitignore`), así que los commits se hacen dentro de cada carpeta:

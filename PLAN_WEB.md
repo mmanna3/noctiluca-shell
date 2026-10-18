@@ -1,6 +1,6 @@
 # Plan: mejorar la web de noctiluca-app
 
-> Estado: **análisis hecho, nada implementado todavía**. Relevado el 2026-10-17.
+> Estado: **punto 1 hecho** (2026-10-18, sin commitear). Relevado el 2026-10-17.
 > La web se usa mucho y se percibe "bastante fea" comparada con `noctiluca-fe`. Este documento junta el diagnóstico, la propuesta y lo que falta decidir.
 
 ## Cómo se hizo el análisis
@@ -35,7 +35,7 @@ En modo dev web aparece un overlay de error de NativeWind: "Cannot manually set 
 
 ## Propuesta (en orden)
 
-1. **Arreglar el bloqueo de OPFS**: reintento al abrir, Web Locks y/o una sola pestaña dueña de la base con aviso en las demás.
+1. ✅ **Arreglar el bloqueo de OPFS**: hecho. Una sola pestaña es dueña de la base (Web Lock `noctiluca-db`). Las demás muestran un aviso con "Usar acá" y se activan solas cuando se cierra la dueña. Antes de abrir, se espera a que OPFS esté libre. Ver `src/sync/candado-base-core.ts` y `apertura-base.web.ts`. Tests: `src/sync/__tests__/candado-base-core.test.ts`, `db-apertura.test.ts` y el e2e `scripts/capturas-web/e2e-pestanas.mjs`.
 2. **Cambios rápidos solo para web**, sin afectar al iPhone (usar `web:`/`md:` de NativeWind o `Platform.OS === "web"`):
    - columna a `max-w-4xl` + `md:px-8`;
    - base de letra a 16px y subir los textos de 10 a 12px;
@@ -47,7 +47,7 @@ En modo dev web aparece un overlay de error de NativeWind: "Cannot manually set 
 ## Decisiones pendientes
 
 - [ ] **Tipografía**: ¿hacer que Merriweather se aplique de verdad en web (igual que el iPhone), o usar la fuente del sistema como el fe?
-- [ ] Confirmar el orden: arrancar por 1 y 2.
+- [x] Confirmar el orden: arrancar por 1 y 2.
 
 ## Ya hecho en la misma sesión
 

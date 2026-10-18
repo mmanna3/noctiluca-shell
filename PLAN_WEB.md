@@ -1,6 +1,6 @@
 # Plan: mejorar la web de noctiluca-app
 
-> Estado: **punto 1 hecho** (2026-10-18, sin commitear). Relevado el 2026-10-17.
+> Estado: **puntos 1 y 2 hechos** (2026-10-18). Relevado el 2026-10-17.
 > La web se usa mucho y se percibe "bastante fea" comparada con `noctiluca-fe`. Este documento junta el diagnóstico, la propuesta y lo que falta decidir.
 
 ## Cómo se hizo el análisis
@@ -36,10 +36,10 @@ En modo dev web aparece un overlay de error de NativeWind: "Cannot manually set 
 ## Propuesta (en orden)
 
 1. ✅ **Arreglar el bloqueo de OPFS**: hecho. Una sola pestaña es dueña de la base (Web Lock `noctiluca-db`). Las demás muestran un aviso con "Usar acá" y se activan solas cuando se cierra la dueña. Antes de abrir, se espera a que OPFS esté libre. Ver `src/sync/candado-base-core.ts` y `apertura-base.web.ts`. Tests: `src/sync/__tests__/candado-base-core.test.ts`, `db-apertura.test.ts` y el e2e `scripts/capturas-web/e2e-pestanas.mjs`.
-2. **Cambios rápidos solo para web**, sin afectar al iPhone (usar `web:`/`md:` de NativeWind o `Platform.OS === "web"`):
-   - columna a `max-w-4xl` + `md:px-8`;
-   - base de letra a 16px y subir los textos de 10 a 12px;
-   - hover y cursor en `ListaItem`, `Boton` y `BotonIcono`, pasando a `Pressable` con `hover:`.
+2. ✅ **Cambios rápidos solo para web**, sin afectar al iPhone (`web:`/`md:` de NativeWind): hecho.
+   - columna `md:max-w-4xl md:px-8` (~740px útiles en escritorio);
+   - `html` a 14.2222px, así el cuerpo (`text-base`) queda en 16px como en el fe; los textos de 10px pasan a `web:text-xs`, y "Sincronizado" y las fechas de la lista a `web:text-sm`;
+   - `ListaItem`, `Boton` y `BotonIcono` pasaron a `Pressable` con `hover:` (filas gris claro, botón negro a `slate-700`), `web:cursor-pointer` y `active:opacity-20` (el mismo feedback que tenía `TouchableOpacity`). Probado en el simulador de iPhone: se ve y responde igual que antes.
 3. **Tipografía**: decisión pendiente (ver abajo).
 4. **En escritorio, sacar la barra de pestañas de abajo** y poner la navegación arriba (encabezado), por ejemplo con `tabBarPosition`/un layout `.web.tsx` o mostrando los tabs como links en el header en pantallas anchas.
 5. **Escrito**: volver a mostrar el breadcrumb y pasar a scroll de página en web.

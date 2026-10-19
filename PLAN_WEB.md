@@ -1,6 +1,6 @@
 # Plan: mejorar la web de noctiluca-app
 
-> Estado: **puntos 1 y 2 hechos** (2026-10-18). Relevado el 2026-10-17.
+> Estado: **puntos 1, 2 y 3 hechos** (2026-10-18). Relevado el 2026-10-17.
 > La web se usa mucho y se percibe "bastante fea" comparada con `noctiluca-fe`. Este documento junta el diagnóstico, la propuesta y lo que falta decidir.
 
 ## Cómo se hizo el análisis
@@ -40,13 +40,17 @@ En modo dev web aparece un overlay de error de NativeWind: "Cannot manually set 
    - columna `md:max-w-4xl md:px-8` (~740px útiles en escritorio);
    - `html` a 14.2222px, así el cuerpo (`text-base`) queda en 16px como en el fe; los textos de 10px pasan a `web:text-xs`, y "Sincronizado" y las fechas de la lista a `web:text-sm`;
    - `ListaItem`, `Boton` y `BotonIcono` pasaron a `Pressable` con `hover:` (filas gris claro, botón negro a `slate-700`), `web:cursor-pointer` y `active:opacity-20` (el mismo feedback que tenía `TouchableOpacity`). Probado en el simulador de iPhone: se ve y responde igual que antes.
-3. **Tipografía**: decisión pendiente (ver abajo).
+3. ✅ **Tipografía, igual en web y en iPhone: Instrument Sans para la interfaz y Source Serif 4 para los escritos** (la idea es parecerse a Claude). Se probó primero Merriweather en todo, pero no gustó.
+   - Hallazgo: la tipografía no se aplicaba **en ningún lado**. La regla `*` de `global.css` no llega a los textos en nativo (NativeWind no aplica `*`) y en web pierde contra react-native-web. El iPhone también usaba la fuente del sistema.
+   - Todos los textos usan ahora `Text`/`TextInput` de `src/components/ui/texto.tsx`, que traduce las clases `font-*` (peso) y `font-serif` (familia) a la familia exacta (`InstrumentSans_600SemiBold`, `SourceSerif4_400Regular`…) y saca esas clases. Un `fontWeight` encima de la familia la rompe: en web la engrosa de más y en iOS React Native busca "la cara más cercana". Los textos anidados heredan la fuente del padre. Serif hay en el título y el cuerpo del escrito (ver/editar, nuevo y papelera); todo lo demás es sans. También llevan la fuente las pestañas (con `lineHeight` 14 y sin encogerse) y los toasts.
+   - Verificación: chequeo automático de textos cortados en 28 pantallas a 390px (`scripts/capturas-web/chequear-textos.mjs`), con 0 problemas nuevos frente a la fuente del sistema, y capturas antes/después de 22 pantallas en el simulador de iPhone, sin textos cortados nuevos.
+   - Problemas que ya existían y siguen igual: con un nombre de carpeta largo, el encabezado empuja el "+" fuera de la pantalla, y el título largo de un escrito se corta porque es un input de una línea.
 4. **En escritorio, sacar la barra de pestañas de abajo** y poner la navegación arriba (encabezado), por ejemplo con `tabBarPosition`/un layout `.web.tsx` o mostrando los tabs como links en el header en pantallas anchas.
 5. **Escrito**: volver a mostrar el breadcrumb y pasar a scroll de página en web.
 
 ## Decisiones pendientes
 
-- [ ] **Tipografía**: ¿hacer que Merriweather se aplique de verdad en web (igual que el iPhone), o usar la fuente del sistema como el fe?
+- [x] **Tipografía**: Instrument Sans (interfaz) + Source Serif 4 (escritos), en las dos plataformas.
 - [x] Confirmar el orden: arrancar por 1 y 2.
 
 ## Ya hecho en la misma sesión

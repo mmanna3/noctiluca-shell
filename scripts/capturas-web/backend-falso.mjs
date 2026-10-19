@@ -11,6 +11,7 @@ const uid = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
 
 const carpetasBase = [
 	["diario", 0], ["escritos", 0], ["música", 0], ["conclusiones", 0], ["mandarina", 0], ["privado", 1],
+	["proyectos y cosas pendientes del año que viene", 0],
 ];
 const carpetas = carpetasBase.map(([titulo, priv], i) => ({
 	id: i + 1, clientId: uid(i + 1), titulo, version: 1, posicion: i, criterioDeOrden: 1,
@@ -25,14 +26,16 @@ const textos = [
 	["Lista de libros", "Rayuela, Los detectives salvajes, El entenado, La invención de Morel."],
 	["Gimnasio: rutina nueva", "Lunes y jueves: piernas. Martes y viernes: espalda y hombros. Miércoles: descanso activo."],
 	["Sueño raro", "Estaba en una casa con infinitas habitaciones y todas daban al mismo patio."],
+	["Una idea larga para un cuento sobre el faro abandonado de la costa", "El farero se fue un invierno y nadie volvió a prender la luz. Los barcos aprendieron a guiarse por otra cosa."],
+	["Borrador descartado", "Esto quedó en la papelera."],
 ];
 const escritos = textos.map(([titulo, cuerpo], i) => ({
 	id: i + 1, clientId: uid(100 + i), titulo, cuerpo, carpetaId: (i % 2) + 1, carpetaClientId: uid((i % 2) + 1),
-	version: 1, fechaHoraCreacion: iso(i * 3 + 1), fechaHoraEdicion: iso(i * 2), estaEnPapelera: false,
+	version: 1, fechaHoraCreacion: iso(i * 3 + 1), fechaHoraEdicion: iso(i * 2), estaEnPapelera: titulo === "Borrador descartado",
 }));
 for (const c of carpetas) c.cantidadDeEscritos = escritos.filter((e) => e.carpetaId === c.id).length;
 
-const habitos = [["meditar", 1], ["entrenar", 1], ["cantar", 2, 30], ["leer", 1]].map(([nombre, tipo, meta], i) => ({
+const habitos = [["meditar", 1], ["entrenar", 1], ["cantar", 2, 30], ["leer", 1], ["practicar escalas en el piano antes de cenar", 2, 45]].map(([nombre, tipo, meta], i) => ({
 	id: i + 1, clientId: uid(200 + i), nombre, tipo, activo: true, posicion: i, metaMinutos: meta, version: 1,
 }));
 const registrosHabito = [];
@@ -46,7 +49,7 @@ for (let d = 0; d < 20; d++) for (const h of habitos) if ((d + h.id) % 3 !== 0) 
 }
 
 const listaHoy = { id: 1, clientId: uid(300), tipo: 1, clavePeriodo: clave(hoy), fechaInicio: clave(hoy) + "T00:00:00", fechaFin: clave(hoy) + "T00:00:00", fechaCreacion: iso(0), version: 1 };
-const itemsObjetivo = ["terminar el capítulo 3", "llamar a mamá", "ensayar 30 minutos", "ordenar el escritorio"].map((texto, i) => ({
+const itemsObjetivo = ["terminar el capítulo 3", "llamar a mamá", "ensayar 30 minutos", "ordenar el escritorio", "revisar las correcciones del editor y mandar la versión final antes del viernes"].map((texto, i) => ({
 	id: i + 1, clientId: uid(400 + i), texto, completado: i < 2, posicion: i, listaTipo: 1, listaClavePeriodo: clave(hoy), version: 1,
 	listaObjetivoClientId: listaHoy.clientId, listaObjetivoId: 1,
 }));
@@ -79,6 +82,7 @@ http.createServer((req, res) => {
 			const ops = JSON.parse(data || "{}").operaciones ?? [];
 			return send(res, 200, { cursor: 999, resultados: ops.map((o, i) => ({ clientOpId: o.clientOpId, clientEntityId: o.clientEntityId, estado: "aplicada", serverId: 5000 + i, version: 2 })) });
 		}
+		if (url.pathname === "/api/Papelera") return send(res, 200, escritos.filter((e) => e.estaEnPapelera));
 		if (url.pathname.startsWith("/api/Carpeta")) return send(res, 200, carpetas);
 		if (url.pathname.startsWith("/api/Escrito")) return send(res, 200, escritos);
 		return send(res, 200, []);

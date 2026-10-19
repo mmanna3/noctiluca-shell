@@ -26,6 +26,7 @@ const PANTALLAS = [
 	{ nombre: "objetivos-anio", ruta: "/objetivos", clicks: [String(new Date().getFullYear())] },
 	{ nombre: "objetivos-lustro", ruta: "/objetivos", clicks: ["5 años"] },
 	{ nombre: "objetivos-planificar", ruta: "/objetivos", clicks: ["Planificar otro día"] },
+	{ nombre: "objetivos-planificar-semana", ruta: "/objetivos", clicks: ["Semana", "Planificar otra semana · 1"] },
 	{ nombre: "historico-objetivos", ruta: "/historico-objetivos?tipo=1" },
 	{ nombre: "lista-objetivos", ruta: "/lista-objetivos/1" },
 	{ nombre: "carpeta-diario", ruta: "/1/escritos" },

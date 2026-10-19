@@ -54,7 +54,21 @@ const itemsObjetivo = ["terminar el capítulo 3", "llamar a mamá", "ensayar 30 
 	listaObjetivoClientId: listaHoy.clientId, listaObjetivoId: 1,
 }));
 
-const pull = { cursor: 999, hayMas: false, carpetas, escritos, habitos, registrosHabito, listasObjetivo: [listaHoy], itemsObjetivo, eliminados: [] };
+// Semana planificada a futuro (dentro de dos semanas), con clave ISO `YYYY-Www` como la app.
+const claveSemana = (d) => {
+	const c = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+	c.setUTCDate(c.getUTCDate() + 4 - (c.getUTCDay() || 7));
+	const semana = Math.ceil(((c - Date.UTC(c.getUTCFullYear(), 0, 1)) / 86400000 + 1) / 7);
+	return `${c.getUTCFullYear()}-W${String(semana).padStart(2, "0")}`;
+};
+const claveSemanaFutura = claveSemana(new Date(hoy.getTime() + 14 * 86400000));
+const listaSemanaFutura = { id: 2, clientId: uid(301), tipo: 2, clavePeriodo: claveSemanaFutura, fechaCreacion: iso(0), version: 1 };
+itemsObjetivo.push(...["preparar el viaje a Rosario", "mandar el presupuesto de la grabación"].map((texto, i) => ({
+	id: 10 + i, clientId: uid(410 + i), texto, completado: false, posicion: i, listaTipo: 2, listaClavePeriodo: claveSemanaFutura, version: 1,
+	listaObjetivoClientId: listaSemanaFutura.clientId, listaObjetivoId: 2,
+})));
+
+const pull = { cursor: 999, hayMas: false, carpetas, escritos, habitos, registrosHabito, listasObjetivo: [listaHoy, listaSemanaFutura], itemsObjetivo, eliminados: [] };
 
 const send = (res, code, body) => {
 	res.writeHead(code, {
@@ -80,7 +94,7 @@ http.createServer((req, res) => {
 		}
 		if (url.pathname === "/api/Sync/aplicar") {
 			const ops = JSON.parse(data || "{}").operaciones ?? [];
-			return send(res, 200, { cursor: 999, resultados: ops.map((o, i) => ({ clientOpId: o.clientOpId, clientEntityId: o.clientEntityId, estado: "aplicada", serverId: 5000 + i, version: 2 })) });
+			return send(res, 200, { cursor: 999, resultados: ops.map((o, i) => ({ clientOpId: o.clientOpId, clientEntityId: o.clientEntityId, estado: "aplicado", serverId: 5000 + i, version: 2 })) });
 		}
 		if (url.pathname === "/api/Papelera") return send(res, 200, escritos.filter((e) => e.estaEnPapelera));
 		if (url.pathname.startsWith("/api/Carpeta")) return send(res, 200, carpetas);

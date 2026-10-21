@@ -44,7 +44,7 @@ for (let d = 0; d < 20; d++) for (const h of habitos) if ((d + h.id) % 3 !== 0) 
 	const f = new Date(hoy.getTime() - d * 86400000);
 	registrosHabito.push({
 		id: ++r, clientId: uid(1000 + r), habitoId: h.id, habitoClientId: h.clientId, fecha: clave(f) + "T00:00:00",
-		valorBooleano: h.tipo === 1 ? true : undefined, valorNumerico: h.tipo === 2 ? 20 + (d % 4) * 5 : undefined, version: 1,
+		valorBooleano: h.tipo === 1 ? (d + h.id) % 5 !== 0 : undefined, valorNumerico: h.tipo === 2 ? ((d + h.id) % 5 === 0 ? 0 : 20 + (d % 4) * 5) : undefined, version: 1,
 	});
 }
 
